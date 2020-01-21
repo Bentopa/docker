@@ -1,6 +1,9 @@
 FROM debian:buster-slim
 MAINTAINER Odoo S.A. <info@odoo.com>
 
+# Use backports to avoid install some libs with pip
+#RUN echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list
+
 # Generate locale C.UTF-8 for postgres and general locale data
 ENV LANG C.UTF-8
 
@@ -60,7 +63,8 @@ RUN set -x; \
         && apt-get update \
         && apt-get -y install -f --no-install-recommends \
         && rm -rf /var/lib/apt/lists/* odoo.deb
-
+# install extra libs
+RUN pip3 install num2words xlwt unicodecsv unicode pysftp==0.2.8 polib==1.1.0
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc/odoo/
